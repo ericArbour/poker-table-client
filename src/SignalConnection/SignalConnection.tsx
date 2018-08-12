@@ -20,6 +20,10 @@ class SignalConnection extends React.Component<{}, IState> {
     connection.on('PlayerCount', playerCount => {
       this.setState({ playerCount });
     });
+
+    connection.on('GameReady', () => {
+      console.log('we ready we ready');
+    });
   }
 
   public render() {
