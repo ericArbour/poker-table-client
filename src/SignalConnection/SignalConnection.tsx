@@ -44,7 +44,6 @@ class SignalConnection extends React.Component<{}, IState> {
   }
 
   public render() {
-    console.log(this.state.groupName);
     return (
       <div>
         <label>
