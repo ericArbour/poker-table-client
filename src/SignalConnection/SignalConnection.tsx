@@ -6,53 +6,62 @@ const connection = new HubConnectionBuilder()
   .build();
 
 interface IState {
-  groupName: string;
-  playerCount: number;
+  connected: boolean;
+  error: string;
+  tableInfo: object;
+  tableName: string;
 }
 
 class SignalConnection extends React.Component<{}, IState> {
   public state: IState = {
-    groupName: '',
-    playerCount: 1
+    connected: false,
+    error: '',
+    tableInfo: {},
+    tableName: ''
   };
 
   constructor(props: any) {
     super(props);
 
-    this.createGroup = this.createGroup.bind(this);
+    this.createTable = this.createTable.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
   public componentDidMount() {
-    connection.start().catch(err => console.error(err.toString()));
+    connection
+      .start()
+      .then(() => this.setState({ connected: true }))
+      .catch(err => this.setState({ error: err.toString() }));
 
-    connection.on('GroupCreated', groups => {
-      console.log(groups);
+    connection.on('TableCreated', tableInfo => {
+      this.setState({ tableInfo });
     });
   }
 
-  public createGroup() {
-    const { groupName } = this.state;
+  public createTable() {
+    const { tableName } = this.state;
     connection
-      .invoke('CreateGroup', groupName)
-      .catch(err => console.error(err.toString()));
-    this.setState({ groupName: '' });
+      .invoke('CreateTable', tableName)
+      .catch(err => this.setState({ error: err.toString() }));
   }
 
   public handleChange(event: React.FormEvent<HTMLInputElement>) {
-    this.setState({ groupName: event.currentTarget.value });
+    this.setState({ tableName: event.currentTarget.value });
   }
 
   public render() {
+    if (!this.state.connected) {
+      return <div>Loading...</div>;
+    }
     return (
       <div>
         <label>
           Table Name
-          <input value={this.state.groupName} onChange={this.handleChange} />
+          <input value={this.state.tableName} onChange={this.handleChange} />
         </label>
         <button
-          disabled={this.state.groupName.length === 0}
-          onClick={this.createGroup}
+          disabled={this.state.tableName.length === 0}
+          onClick={this.createTable}
         >
           Create Group
         </button>
