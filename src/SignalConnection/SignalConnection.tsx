@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { HubConnectionBuilder } from '@aspnet/signalr';
+import Table from '../Table/Table';
+import { ITable } from '../types/interfaces';
 
 const connection = new HubConnectionBuilder()
   .withUrl('http://192.168.1.78:5000/pokerHub')
@@ -8,7 +10,7 @@ const connection = new HubConnectionBuilder()
 interface IState {
   connected: boolean;
   error: string;
-  tableInfo: object;
+  tableInfo: ITable | null;
   tableName: string;
 }
 
@@ -16,7 +18,7 @@ class SignalConnection extends React.Component<{}, IState> {
   public state: IState = {
     connected: false,
     error: '',
-    tableInfo: {},
+    tableInfo: null,
     tableName: ''
   };
 
@@ -36,6 +38,10 @@ class SignalConnection extends React.Component<{}, IState> {
     connection.on('TableCreated', tableInfo => {
       this.setState({ tableInfo });
     });
+
+    connection.on('TableUpdated', tableInfo => {
+      this.setState({ tableInfo });
+    });
   }
 
   public createTable() {
@@ -52,6 +58,9 @@ class SignalConnection extends React.Component<{}, IState> {
   public render() {
     if (!this.state.connected) {
       return <div>Loading...</div>;
+    }
+    if (this.state.tableInfo) {
+      return <Table tableInfo={this.state.tableInfo} />;
     }
     return (
       <div>
