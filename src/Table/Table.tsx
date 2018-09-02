@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ITable, IPlayer } from '../../types/interfaces';
+import { ITable, IPlayer } from '../types/interfaces';
 
 interface IProps {
   tableInfo: ITable;

@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { HubConnectionBuilder } from '@aspnet/signalr';
 import Table from '../Table/Table';
+<<<<<<< HEAD
 import { ITable } from 'shared/src/types/interfaces';
+=======
+import { ITable } from '../types/interfaces';
+>>>>>>> a2d54a03c42edbe4fb547108c2861bdd0a32dd83
 
 const connection = new HubConnectionBuilder()
   .withUrl('http://192.168.1.78:5000/pokerHub')
@@ -56,7 +60,10 @@ class SignalConnection extends React.Component<{}, IState> {
   }
 
   public render() {
+<<<<<<< HEAD
     console.log();
+=======
+>>>>>>> a2d54a03c42edbe4fb547108c2861bdd0a32dd83
     if (!this.state.connected) {
       return <div>Loading...</div>;
     }
