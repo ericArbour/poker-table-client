@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { HubConnectionBuilder } from '@aspnet/signalr';
-import Table from '../shared/components/Table/Table';
+import { HubConnectionBuilder, HubConnection } from '@aspnet/signalr';
+import Table from '../Table/Table';
 import { ITable } from '../shared/types/interfaces';
 
-const connection = new HubConnectionBuilder()
+const connection: HubConnection = new HubConnectionBuilder()
   .withUrl('http://192.168.1.78:5000/pokerHub')
   .build();
 
@@ -26,6 +26,7 @@ class SignalConnection extends React.Component<{}, IState> {
     super(props);
 
     this.createTable = this.createTable.bind(this);
+    this.startGame = this.startGame.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -35,12 +36,16 @@ class SignalConnection extends React.Component<{}, IState> {
       .then(() => this.setState({ connected: true }))
       .catch(err => this.setState({ error: err.toString() }));
 
-    connection.on('TableCreated', tableInfo => {
+    connection.on('TableCreated', (tableInfo: ITable) => {
       this.setState({ tableInfo });
     });
 
-    connection.on('TableUpdated', tableInfo => {
+    connection.on('TableUpdated', (tableInfo: ITable) => {
       this.setState({ tableInfo });
+    });
+
+    connection.on('GameStarted', (tableInfo: ITable) => {
+      console.log(tableInfo);
     });
   }
 
@@ -48,6 +53,12 @@ class SignalConnection extends React.Component<{}, IState> {
     const { tableName } = this.state;
     connection
       .invoke('CreateTable', tableName)
+      .catch(err => this.setState({ error: err.toString() }));
+  }
+
+  public startGame() {
+    connection
+      .invoke('StartGame')
       .catch(err => this.setState({ error: err.toString() }));
   }
 
@@ -60,7 +71,9 @@ class SignalConnection extends React.Component<{}, IState> {
       return <div>Loading...</div>;
     }
     if (this.state.tableInfo) {
-      return <Table tableInfo={this.state.tableInfo} />;
+      return (
+        <Table tableInfo={this.state.tableInfo} startGame={this.startGame} />
+      );
     }
     return (
       <div>
