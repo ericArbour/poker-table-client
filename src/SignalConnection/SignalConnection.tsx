@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { HubConnectionBuilder, HubConnection } from '@aspnet/signalr';
-import Table from '../Table/Table';
-import { ITable } from '../shared/types/interfaces';
+import * as React from "react";
+import { HubConnectionBuilder, HubConnection } from "@aspnet/signalr";
+import Table from "../Table/Table";
+import { ITable } from "../shared/types/interfaces";
 
 const connection: HubConnection = new HubConnectionBuilder()
-  .withUrl('http://192.168.1.78:5000/pokerHub')
+  .withUrl("http://10.0.0.66:5000/pokerHub")
   .build();
 
 interface IState {
@@ -17,9 +17,9 @@ interface IState {
 class SignalConnection extends React.Component<{}, IState> {
   public state: IState = {
     connected: false,
-    error: '',
+    error: "",
     tableInfo: null,
-    tableName: ''
+    tableName: ""
   };
 
   constructor(props: any) {
@@ -36,29 +36,29 @@ class SignalConnection extends React.Component<{}, IState> {
       .then(() => this.setState({ connected: true }))
       .catch(err => this.setState({ error: err.toString() }));
 
-    connection.on('TableCreated', (tableInfo: ITable) => {
+    connection.on("TableCreated", (tableInfo: ITable) => {
       this.setState({ tableInfo });
     });
 
-    connection.on('TableUpdated', (tableInfo: ITable) => {
+    connection.on("TableUpdated", (tableInfo: ITable) => {
       this.setState({ tableInfo });
     });
 
-    connection.on('GameStarted', (tableInfo: ITable) => {
-      console.log(tableInfo);
+    connection.on("GameStarted", (gameInfo: ITable) => {
+      console.log(gameInfo);
     });
   }
 
   public createTable() {
     const { tableName } = this.state;
     connection
-      .invoke('CreateTable', tableName)
+      .invoke("CreateTable", tableName)
       .catch(err => this.setState({ error: err.toString() }));
   }
 
   public startGame() {
     connection
-      .invoke('StartGame')
+      .invoke("StartGame")
       .catch(err => this.setState({ error: err.toString() }));
   }
 
