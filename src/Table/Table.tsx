@@ -11,8 +11,8 @@ const Table = ({ tableInfo, startGame }: IProps) => {
   return (
     <div>
       <h3>{tableInfo.name}</h3>
-      <p>Player Count: {tableInfo.playerCount}</p>
-      {tableInfo.playerCount > 1 ? (
+      <p>Player Count: {tableInfo.players.length}</p>
+      {tableInfo.players.length > 1 ? (
         <button onClick={startGame}>Start Game</button>
       ) : null}
     </div>
