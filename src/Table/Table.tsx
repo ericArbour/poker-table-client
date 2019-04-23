@@ -25,7 +25,9 @@ export default ({ table }: Props) => {
       <p>Players:</p>
       <ul>
         {table.players.map(player => (
-          <li key={player.id}>{player.id}</li>
+          <li key={player.id}>
+            Id: {player.id}, Chip Count: {player.chipCount}
+          </li>
         ))}
       </ul>
       {!table.isPlaying && table.players.length > 1 ? (
